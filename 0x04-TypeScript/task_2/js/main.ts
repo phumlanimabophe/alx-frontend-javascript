@@ -1,84 +1,85 @@
-interface DirectorInterface {
-  workFromHome(): string;
-  getCoffeeBreak(): string;
-  workDirectorTasks(): string;
+// main.ts
+
+// Define the Teacher interface with specific attributes and constraints
+interface Teacher {
+  readonly firstName: string;        // First name is readonly
+  readonly lastName: string;         // Last name is readonly
+  fullTimeEmployee: boolean;         // Full-time employment status
+  yearsOfExperience?: number;        // Years of experience (optional)
+  location: string;                  // Location of the teacher
+  [propName: string]: any;           // Allow any additional attributes
 }
 
-interface TeacherInterface {
-  workFromHome(): string;
-  getCoffeeBreak(): string;
-  workTeacherTasks(): string;
+// Example object adhering to the Teacher interface
+const teacher3: Teacher = {
+  firstName: "John",
+  fullTimeEmployee: false,
+  lastName: "Doe",
+  location: "London",
+  contract: false,                   // Additional attribute without specifying the name
+};
+
+console.log(teacher3);
+
+// Interface extending the Teacher interface to represent Directors
+interface Directors extends Teacher {
+  numberOfReports: number;           // Additional attribute specific to Directors
 }
 
-export class Director implements DirectorInterface {
-  workFromHome(): string {
-    console.log("Working from home");
-    return "Working from home";
-  }
+// Example object adhering to the Directors interface
+const director1: Directors = {
+  firstName: "John",
+  lastName: "Doe",
+  location: "London",
+  fullTimeEmployee: true,
+  numberOfReports: 17,
+};
 
-  getCoffeeBreak(): string {
-    console.log("Getting a coffee break");
-    return "Getting a coffee break";
-  }
+console.log(director1);
 
-  workDirectorTasks(): string {
-    console.log("Getting to director tasks");
-    return "Getting to director tasks";
-  }
+// Define a function type for printing a teacher's name in a specific format
+interface printTeacherFunction {
+  (firstName: string, lastName: string): string;
 }
 
-export class Teacher implements TeacherInterface {
-  workFromHome(): string {
-    return "Cannot work from home";
-  }
-  getCoffeeBreak(): string {
-    return "Cannot have a break";
-  }
-  workTeacherTasks(): string {
-    return "Getting to work";
-  }
+// Implementation of the printTeacher function
+export const printTeacher: printTeacherFunction = function (
+  firstName: string,
+  lastName: string
+): string {
+  return `${firstName.charAt(0)}. ${lastName}`;
+};
+
+console.log(printTeacher("John", "Doe"));
+
+// Define interfaces for creating and interacting with student objects
+interface StudentConstructor {
+  new (firstName: string, lastName: string): StudentClassInterface;
 }
 
-export function createEmployee(salary: number | string): Teacher | Director {
-  if (typeof salary === "number" && salary < 500) return new Teacher();
-
-  return new Director();
+interface StudentClassInterface {
+  workOnHomework(): string;
+  displayName(): string;
 }
 
-// console.log(createEmployee(200));
-// console.log(createEmployee(1000));
-// console.log(createEmployee("$500"));
+// Implementation of a class representing a student
+export class StudentClass implements StudentClassInterface {
+  firstName: string;
+  lastName: string;
 
-export function isDirector(employee: TeacherInterface | DirectorInterface): employee is Director {
-  return (employee as Director).workDirectorTasks !== undefined;
-}
-
-export function executeWork(employee: DirectorInterface | TeacherInterface): string {
-  let msg;
-
-  if (isDirector(employee)) {
-    msg = employee.workDirectorTasks();
-  } else {
-    msg = employee.workTeacherTasks();
+  // Constructor for initializing a student object
+  constructor(firstName: string, lastName: string) {
+    this.firstName = firstName;
+    this.lastName = lastName;
   }
 
-  console.log(msg);
-  return msg;
-}
+  // Method for simulating the student working on homework
+  workOnHomework(): string {
+    return "Currently working";
+  }
 
-// executeWork(createEmployee(200));
-// executeWork(createEmployee(1000));
-
-type Subjects = "Math" | "History";
-
-export function teachClass(todayClass:Subjects): string {
-  if (todayClass === "Math") {
-    return "Teaching Math";
-  } else if (todayClass === "History") {
-    return "Teaching History";
+  // Method for getting the student's display name
+  displayName(): string {
+    return this.firstName;
   }
 }
-
-// console.log(teachClass("Math"));
-
-// console.log(teachClass("History"));
